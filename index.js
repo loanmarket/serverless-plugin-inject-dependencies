@@ -10,7 +10,6 @@ function getHandlerFilePath(servicePath, handler) {
 function resolveToBaseModuleGlob(file) {
   const relative = path.relative(process.cwd(), file);
   const match = relative.match(/^((\.\.\/)*node_modules\/\S+?\/)/);
-  console.log(match);
   if (match) {
     return `${match[1]}**`;
   }
@@ -39,6 +38,7 @@ function injectDependencies(serverless) {
     .map(resolveToBaseModuleGlob)
     .uniq()
     .filter(a => !!a)
+    .filter(a => !a.includes('aws-sdk'))
     .value();
   const include = serverless.service.package.include || [];
   serverless.service.package.include = [...include, ...uniq];
